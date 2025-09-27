@@ -3,11 +3,11 @@ import os
 import pdfplumber
 import io
 
-# Folder to save outputs
+
 OUT_FOLDER = "data/markdown_cuad"
 os.makedirs(OUT_FOLDER, exist_ok=True)
 
-# CUAD clause keywords
+
 CLAUSE_KEYWORDS = [
     "Affiliate License/Trademark",
     "Anti-assignment",
@@ -51,22 +51,21 @@ CLAUSE_KEYWORDS = [
     "Waiver"
 ]
 
-print("📥 Loading CUAD in streaming mode (PDFs)...")
+
 dataset = load_dataset("TheAtticusProject/cuad", split="train", streaming=True)
 
-# Function to highlight keywords in text
+
 def highlight_keywords(text, keywords):
     for kw in keywords:
         text = text.replace(kw, f"**{kw}**")
         text = text.replace(kw.lower(), f"**{kw.lower()}**")
     return text
 
-# Save first 12 contracts as Markdown
 for i, example in enumerate(dataset):
     if i >= 12:
         break
 
-    # Get raw PDF bytes from Hugging Face
+    # raww PDF bytes from huggingface
     pdf_bytes = example["pdf"]["bytes"]
     pdf_stream = io.BytesIO(pdf_bytes)
 
@@ -77,11 +76,12 @@ for i, example in enumerate(dataset):
             text = page.extract_text() or ""
             text = highlight_keywords(text, CLAUSE_KEYWORDS)
 
-            # Markdown formatting
+            # Markdown 
             f.write(f"# Page {page_num}\n")
             f.write(text + "\n\n")
             f.write("---\n\n")
 
-    print(f"✅ Saved {outpath}")
+    print(f"Saved {outpath}")
 
-print("🎉 Done! Markdown contracts saved in data/markdown_cuad/")
+print("FINALLY saved in data/markdown_cuad/")
+
